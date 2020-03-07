@@ -19,9 +19,10 @@ const stateKey = 'spotify_auth_state';
 app
   .use(express.static(__dirname + '/public', { extensions: ['html'] }))
   .use(cors())
+  .use(bodyParser.json())
   .use(cookieParser());
 
-app.get('/spotify', (req, res) => {
+app.get('/api/v1/login', (req, res) => {
   const scopes = 'user-read-private user-read-email';
   const state = cryptoRandomString({ length: 16, type: 'base64' });
   res.cookie(stateKey, state);
@@ -37,10 +38,8 @@ app.get('/spotify', (req, res) => {
   );
 });
 
+// Redirect from callback to another url.
 app.get('/callback', (req, res) => {
-  // your application requests refresh and access tokens
-  // after checking the state parameter
-
   var code = req.query.code || null;
   var state = req.query.state || null;
   var storedState = req.cookies ? req.cookies[stateKey] : null;
@@ -101,7 +100,7 @@ app.get('/callback', (req, res) => {
   }
 });
 
-app.get('/refresh_token', function(req, res) {
+app.get('/api/v1/token', function(req, res) {
   // requesting access token from refresh token
   const refresh_token = req.query.refresh_token;
   const authOptions = {
@@ -127,7 +126,7 @@ app.get('/refresh_token', function(req, res) {
   });
 });
 
-app.get('/playlist', (req, res) => {
+app.get('/api/v1/playlists', (req, res) => {
   const options = {
     url: `https://api.spotify.com/v1/users/${process.env.USER_ID}/playlists`,
     headers: { Authorization: 'Bearer ' + process.env.ACCESS_TOKEN },
