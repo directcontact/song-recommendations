@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>
+      test
+    </title>
+  </head>
+  <body>
+    <h1>test</h1>
+    <button class="playlist--button">
+      click to get playlists after login
+    </button>
+    <button class="login--button">
+      click to login
+    </button>
+
+    <div class="playlist--list">
+      replace text here with playlists
+    </div>
+  </body>
+  <script>
+    document.querySelector('.login--button').addEventListener('click', () => {
+      fetch('/login');
+    });
+
+    document
+      .querySelector('.playlist--button')
+      .addEventListener('click', () => {
+        fetch('/api/v1/playlists').then(data => {
+          document.querySelector('.playlist--list').innerHTML = data.playlists;
+        });
+      });
+  </script>
+</html>
