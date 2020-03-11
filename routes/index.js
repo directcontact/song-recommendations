@@ -21,7 +21,7 @@ const spotifyApi = new SpotifyWebApi({
 
 router.get('/', (req, res) => {
   console.log('Request for home receieved');
-  res.render('index');
+  res.render('index.html');
 });
 
 router.get('/login', (req, res) => {
