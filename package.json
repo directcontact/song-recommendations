@@ -4,7 +4,9 @@
   "description": "A Web app built on Spotify API for requesting new songs based on existing playlist",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "node app.js",
+    "build": "next build",
+    "start": "next start"
   },
   "repository": {
     "type": "git",
@@ -22,8 +24,11 @@
     "cors": "^2.8.5",
     "crypto-random-string": "^3.1.0",
     "dotenv": "^8.2.0",
-    "ejs": "^3.0.1",
     "express": "^4.17.1",
+    "fs": "0.0.1-security",
+    "isomorphic-unfetch": "^3.0.0",
+    "next": "^9.3.0",
+    "node-fetch": "^2.6.0",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
     "spotify-web-api-node": "^4.0.0"
