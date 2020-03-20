@@ -4,7 +4,9 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const SpotifyWebApi = require('spotify-web-api-node');
 const cryptoRandomString = require('crypto-random-string');
+const session = require('express-session');
 const path = require('path');
+const recommendAlgorithm = require('./util/recommendAlgorithm');
 require('dotenv').config();
 
 const scopes = [
@@ -15,6 +17,7 @@ const scopes = [
 ];
 
 const state = cryptoRandomString({ length: 10, type: 'base64' });
+const session_secret = cryptoRandomString({ length: 10, type: 'base64' });
 
 const spotifyApi = new SpotifyWebApi({
   clientId: process.env.CLIENT_ID,
@@ -27,6 +30,7 @@ app
   .use(cors())
   .use(bodyParser.json())
   .use(cookieParser())
+  .use(session({ secret: session_secret }))
   .use(
     express.static(path.join(__dirname, './public'), {
       extensions: ['html']
@@ -65,8 +69,36 @@ app.get('/api/v1/spotify/playlists', async (req, res) => {
 app.get('/api/v1/spotify/playlists/:playlistId', async (req, res) => {
   const id = req.params.playlistId;
   const data = await spotifyApi.getPlaylistTracks(id);
-  const tracks = data.body.items.map(item => item.track.name);
-  res.send(tracks);
+  const tracks = data.body.items.map(item => item.track);
+  req.session.tracks = tracks;
+  res.redirect('/recommendations');
+});
+
+app.get('/api/v1/spotify/recommend', async (req, res) => {
+  const tracks = req.session.tracks;
+  const ids = tracks.map(track => track.id);
+  const features = await spotifyApi.getAudioFeaturesForTracks(ids);
+  const recommendation = recommendAlgorithm(features.body.audio_features, ids);
+  console.log(recommendation);
+  try {
+    const song = await spotifyApi.getRecommendations({
+      seed_tracks: recommendation.tracks,
+      target_danceability: recommendation.danceability,
+      target_energy: recommendation.energy,
+      target_loudness: recommendation.loudness,
+      target_mode: recommendation.mode,
+      target_speechiness: recommendation.spechiness,
+      target_acousticness: recommendation.acousticness,
+      target_instrumentalness: recommendation.instrumentalness,
+      target_liveness: recommendation.liveness,
+      target_valence: recommendation.valence,
+      target_popularity: recommendation.popularity
+    });
+  } catch (e) {
+    console.log(e);
+  }
+  // console.log(song);
+  // res.send(song);
 });
 
 app.get('/api/v1/spotify/token', async (req, res) => {

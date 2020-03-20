@@ -21,15 +21,21 @@
     <div class="container bg-faded py-3">
       <div class="row">
         <h1 class="display-1 text-center">
-          Below should be all your playlists!
         </h1>
       </div>
       <div class="row justify-content-center">
-        <ul class="list-group">
-        </ul>
+        <div class='insert-content'>
+          
+        </div>
       </div>
     </div>
+
     <script>
+      fetch('/api/v1/spotify/recommend')
+        .then(data => data.json())
+        .then(data => {
+          console.log(data);
+        })
     </script>
   </body>
 </html>
