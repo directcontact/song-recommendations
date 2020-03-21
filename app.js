@@ -79,26 +79,20 @@ app.get('/api/v1/spotify/recommend', async (req, res) => {
   const ids = tracks.map(track => track.id);
   const features = await spotifyApi.getAudioFeaturesForTracks(ids);
   const recommendation = recommendAlgorithm(features.body.audio_features, ids);
-  console.log(recommendation);
-  try {
-    const song = await spotifyApi.getRecommendations({
-      seed_tracks: recommendation.tracks,
-      target_danceability: recommendation.danceability,
-      target_energy: recommendation.energy,
-      target_loudness: recommendation.loudness,
-      target_mode: recommendation.mode,
-      target_speechiness: recommendation.spechiness,
-      target_acousticness: recommendation.acousticness,
-      target_instrumentalness: recommendation.instrumentalness,
-      target_liveness: recommendation.liveness,
-      target_valence: recommendation.valence,
-      target_popularity: recommendation.popularity
-    });
-  } catch (e) {
-    console.log(e);
-  }
-  // console.log(song);
-  // res.send(song);
+  const songs = await spotifyApi.getRecommendations({
+    seed_tracks: recommendation.seed_tracks,
+    target_danceability: recommendation.danceability,
+    target_energy: recommendation.energy,
+    target_loudness: recommendation.loudness,
+    target_mode: recommendation.mode,
+    target_speechiness: recommendation.spechiness,
+    target_acousticness: recommendation.acousticness,
+    target_instrumentalness: recommendation.instrumentalness,
+    target_liveness: recommendation.liveness,
+    target_valence: recommendation.valence,
+    target_popularity: recommendation.popularity
+  });
+  res.send(songs);
 });
 
 app.get('/api/v1/spotify/token', async (req, res) => {

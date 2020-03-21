@@ -24,9 +24,9 @@
         </h1>
       </div>
       <div class="row justify-content-center">
-        <div class='insert-content'>
-          
-        </div>
+        <ul class="list-group">
+
+        </ul>
       </div>
     </div>
 
@@ -34,8 +34,15 @@
       fetch('/api/v1/spotify/recommend')
         .then(data => data.json())
         .then(data => {
+          const list = document.querySelector('.list-group');
           console.log(data);
-        })
+          data.body.tracks.map(track => {
+            const newChild = document.createElement('li');
+            newChild.setAttribute('class', 'list-group-item');
+            newChild.innerText = `Artists: ${track.artists.map(artist => artist.name).join(', ')}\n Track: ${track.name}.`
+            list.appendChild(newChild);
+          });
+        });
     </script>
   </body>
 </html>

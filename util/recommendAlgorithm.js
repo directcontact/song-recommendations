@@ -10,7 +10,7 @@ const recommendAlgorithm = (features, ids) => {
     instrumentalness: 0,
     liveness: 0,
     valence: 0,
-    popularity: 20
+    popularity: 0
   };
   features.map(feature => {
     recommendation.danceability += feature.danceability;
