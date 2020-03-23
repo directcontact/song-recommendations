@@ -5,7 +5,12 @@ const Layout = props => {
   return (
     <div>
       <Header />
-      <div className="container bg-faded py-3 header">{props.children}</div>
+      <header className="masthead">
+        <div className="container h-100">{props.children}</div>
+      </header>
+      <div className="container">
+        <footer className="footer">&copy; 2020 - kimjeff49</footer>
+      </div>
     </div>
   );
 };

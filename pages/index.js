@@ -31,7 +31,7 @@ export default class IndexPage extends React.Component {
     const { auth_url, auth_state } = this.state;
     if (auth_state == 200) {
       return (
-        <div>
+        <div className="h-100 d-flex flex-column justify-content-center">
           <div className="row justify-content-center">
             <div className="jumbotron">
               <h1 className="display-4">You're logged in!</h1>
@@ -46,7 +46,7 @@ export default class IndexPage extends React.Component {
       );
     } else {
       return (
-        <div>
+        <div className="h-100 d-flex flex-column justify-content-center">
           <div className="row justify-content-center">
             <div className="jumbotron">
               <h1 className="display-4">Need new song recommendations?</h1>

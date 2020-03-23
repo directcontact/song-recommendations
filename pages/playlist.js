@@ -51,7 +51,7 @@ export default class Playlist extends React.Component {
   render() {
     return (
       <Layout>
-        <div>
+        <div className="h-100 d-flex flex-column justify-content-center">
           <div className="row justify-content-center">
             <div className="jumbotron">
               <h1 className="display-4 text-center">

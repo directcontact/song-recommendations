@@ -39,11 +39,7 @@ server
       .use(bodyParser.json())
       .use(cookieParser())
       .use(session({ secret: session_secret }))
-      .use(
-        express.static(path.join(__dirname, './public'), {
-          extensions: ['html']
-        })
-      )
+      .use('/css', express.static(path.join(__dirname, './css')))
       .use((req, res, next) => {
         res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
         res.header(
