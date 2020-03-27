@@ -36,6 +36,7 @@ export default class Recommendation extends React.Component {
                       <div className="card-text">
                         <a
                           href={track.external_urls.spotify}
+                          target="_blank"
                           className="list-group-item list-group-item-action"
                           key={idx}
                         >

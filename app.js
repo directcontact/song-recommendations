@@ -5,7 +5,6 @@ const cookieParser = require('cookie-parser');
 const SpotifyWebApi = require('spotify-web-api-node');
 const cryptoRandomString = require('crypto-random-string');
 const session = require('express-session');
-const path = require('path');
 const next = require('next');
 const recommendAlgorithm = require('./util/recommendAlgorithm');
 require('dotenv').config();
@@ -16,6 +15,12 @@ const scopes = [
   'playlist-modify-public',
   'playlist-modify-private'
 ];
+
+/*
+  - Switch api routes to next.js routes
+  - Start up on heroku
+  - Fix some styling on bootstrap
+ */
 
 const state = cryptoRandomString({ length: 10, type: 'base64' });
 const session_secret = cryptoRandomString({ length: 10, type: 'base64' });
@@ -32,7 +37,7 @@ const spotifyApi = new SpotifyWebApi({
   redirectUri: `${base_url}/${callback}`
 });
 
-const dev = process.env.NODE_ENV !== 'production';
+const dev = env !== 'production';
 const server = next({ dev });
 const handle = server.getRequestHandler();
 server
@@ -45,9 +50,8 @@ server
       .use(bodyParser.json())
       .use(cookieParser())
       .use(session({ secret: session_secret }))
-      .use('/css', express.static(path.join(__dirname, './css')))
       .use((req, res, next) => {
-        res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
+        res.header('Access-Control-Allow-Origin', `${base_url}/${callback}`);
         res.header(
           'Access-Control-Allow-Headers',
           'Origin, X-Requested-With, Content-Type, Accept'
@@ -68,7 +72,7 @@ server
       const { access_token, refresh_token } = data.body;
       spotifyApi.setAccessToken(access_token);
       spotifyApi.setRefreshToken(refresh_token);
-      res.redirect('http://localhost:3000/');
+      res.redirect(base_url);
     });
 
     app.get('/api/v1/spotify/auth/state', async (req, res) => {
