@@ -4,7 +4,7 @@
   "description": "A Web app built on Spotify API for requesting new songs based on existing playlist",
   "main": "app.js",
   "scripts": {
-    "dev": "nodemon app.js",
+    "dev": "node app.js",
     "build": "next build",
     "start": "next start"
   },

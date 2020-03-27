@@ -19,11 +19,17 @@ const scopes = [
 
 const state = cryptoRandomString({ length: 10, type: 'base64' });
 const session_secret = cryptoRandomString({ length: 10, type: 'base64' });
+const client_id = process.env.CLIENT_ID;
+const client_secret_id = process.env.CLIENT_ID_SECRET;
+const env = process.env.NODE_ENV;
+const base_url =
+  env !== 'production' ? process.env.BASE_URL_DEV : process.env.BASE_URL_PROD;
+const callback = process.env.CALLBACK;
 
 const spotifyApi = new SpotifyWebApi({
-  clientId: process.env.CLIENT_ID,
-  clientSecret: process.env.CLIENT_ID_SECRET,
-  redirectUri: process.env.CALLBACK_URL
+  clientId: client_id,
+  clientSecret: client_secret_id,
+  redirectUri: `${base_url}/${callback}`
 });
 
 const dev = process.env.NODE_ENV !== 'production';
@@ -124,8 +130,8 @@ server
       return handle(req, res);
     });
 
-    app.listen(process.env.PORT, () => {
-      console.log(`Listening on port ${process.env.PORT}!`);
+    app.listen(process.env.PORT || 3000, () => {
+      console.log(`Listening on port ${process.env.PORT || 3000}!`);
     });
   })
   .catch(err => {
