@@ -17,9 +17,8 @@ const scopes = [
 ];
 
 /*
-  - Switch api routes to next.js routes
-  - Start up on heroku
   - Fix some styling on bootstrap
+  - add option to create new playlist from the recommendations
  */
 
 const state = cryptoRandomString({ length: 10, type: 'base64' });

@@ -33,5 +33,6 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "spotify-web-api-node": "^4.0.0"
-  }
+  },
+  "devDependencies": {}
 }
