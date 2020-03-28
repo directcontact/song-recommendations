@@ -16,11 +16,6 @@ const scopes = [
   'playlist-modify-private'
 ];
 
-/*
-  - Fix some styling on bootstrap
-  - add option to create new playlist from the recommendations
- */
-
 const state = cryptoRandomString({ length: 10, type: 'base64' });
 const session_secret = cryptoRandomString({ length: 10, type: 'base64' });
 const client_id = process.env.CLIENT_ID;

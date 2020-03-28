@@ -34,5 +34,7 @@
     "react-dom": "^16.13.1",
     "spotify-web-api-node": "^4.0.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "openssl": "^1.1.0"
+  }
 }
