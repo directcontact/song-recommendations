@@ -4,7 +4,7 @@
 
 ## Demo
 
-song-recommendations.herokuapp.com
+https://song-recommendations.herokuapp.com
 
 ## Build Scripts
 
