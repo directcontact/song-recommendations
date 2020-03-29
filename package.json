@@ -32,6 +32,8 @@
     "node-fetch": "^2.6.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-spotify-player": "^1.0.4",
+    "react-top-loading-bar": "^1.2.0",
     "spotify-web-api-node": "^4.0.0"
   }
 }

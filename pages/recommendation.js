@@ -1,6 +1,8 @@
 import React from 'react';
 import Layout from '../components/Layout';
 import { chunk } from 'lodash';
+import SpotifyPlayer from 'react-spotify-player';
+import LoadingBar from 'react-top-loading-bar';
 
 export default class Recommendation extends React.Component {
   constructor() {
@@ -32,16 +34,25 @@ export default class Recommendation extends React.Component {
                 <div className="card-group">
                   <div className="card">
                     <div className="card-body">
-                      <div className="card-title">{track.name}</div>
+                      <h5 className="card-title">
+                        {track.artists.map(artist => artist.name).join(', ')}
+                      </h5>
                       <div className="card-text">
                         <a
-                          href={track.external_urls.spotify}
                           target="_blank"
-                          className="list-group-item list-group-item-action"
+                          className="list-group-item"
                           key={idx}
                         >
-                          {track.artists.map(artist => artist.name).join(', ')}
+                          {track.name}
                         </a>
+                      </div>
+                      <div className="card-footer">
+                        <SpotifyPlayer
+                          uri={track.external_urls.spotify}
+                          size={{ width: '100%', height: 80 }}
+                          view="coverart"
+                          theme="black"
+                        />
                       </div>
                     </div>
                   </div>

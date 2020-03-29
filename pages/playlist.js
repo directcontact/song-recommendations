@@ -32,14 +32,18 @@ export default class Playlist extends React.Component {
         {sections.map((divs, idx) => (
           <div className="row mb-3 mt-3" key={idx}>
             {divs.map((playlist, idx) => (
-              <div className="col-md-4" key={idx}>
-                <a
-                  href={'/api/v1/spotify/playlists/' + playlist.id}
-                  className="list-group-item list-group-item-action"
-                  key={idx}
-                >
-                  {playlist.name}
-                </a>
+              <div className="col-md-4 text-center" key={idx}>
+                <div className="card-group">
+                  <div className="card">
+                    <a
+                      href={'/api/v1/spotify/playlists/' + playlist.id}
+                      className="list-group-item list-group-item-action"
+                      key={idx}
+                    >
+                      <h6>{playlist.name}</h6>
+                    </a>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
