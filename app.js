@@ -112,7 +112,7 @@ server
         target_instrumentalness: recommendation.instrumentalness,
         target_liveness: recommendation.liveness,
         target_valence: recommendation.valence,
-        max_popularity: recommendation.popularity
+        target_popularity: recommendation.popularity
       });
       res.send(songs);
     });
