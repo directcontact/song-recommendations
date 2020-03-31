@@ -1,6 +1,7 @@
 import React from 'react';
 import Layout from '../components/Layout';
 import { chunk } from 'lodash';
+import Router from 'next/router';
 
 export default class Playlist extends React.Component {
   constructor() {
@@ -16,12 +17,18 @@ export default class Playlist extends React.Component {
 
   getPlaylists() {
     fetch('/api/v1/spotify/playlists')
-      .then(data => data.json())
+      .then(data => {
+        if (data.status === 401) {
+          Router.push('/');
+        }
+        return data.json();
+      })
       .then(data =>
         this.setState({
           playlists: data.items
         })
-      );
+      )
+      .catch(err => console.log(err.stack));
   }
 
   renderPlaylists() {

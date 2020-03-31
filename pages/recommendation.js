@@ -2,6 +2,7 @@ import React from 'react';
 import Layout from '../components/Layout';
 import { chunk } from 'lodash';
 import SpotifyPlayer from 'react-spotify-player';
+import Router from 'next/router';
 
 export default class Recommendation extends React.Component {
   constructor() {
@@ -17,8 +18,14 @@ export default class Recommendation extends React.Component {
 
   getRecommendations() {
     fetch('/api/v1/spotify/recommend')
-      .then(data => data.json())
-      .then(data => this.setState({ tracks: data.body.tracks }));
+      .then(data => {
+        if (data.status === 401) {
+          Router.push('/');
+        }
+        return data.json();
+      })
+      .then(data => this.setState({ tracks: data.body.tracks }))
+      .catch(err => console.log(err.stack));
   }
 
   renderRecommendations() {

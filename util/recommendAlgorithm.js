@@ -12,6 +12,11 @@ const recommendAlgorithm = (features, ids) => {
     valence: 0,
     popularity: 0
   };
+
+  if (features === undefined) {
+    return;
+  }
+
   features.map(feature => {
     recommendation.danceability += feature.danceability;
     recommendation.energy += feature.energy;
