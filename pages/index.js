@@ -2,64 +2,62 @@ import React from 'react';
 import Layout from '../components/Layout';
 import fetch from 'isomorphic-unfetch';
 import Link from 'next/link';
+import Jumbotron from '../components/Jumbotron';
+import Router from 'next/router';
+import cryptoRandomString from 'crypto-random-string';
 
 export default class IndexPage extends React.Component {
   constructor() {
     super();
     this.state = {
       auth_url: null,
-      auth_state: null
+      access_token: '',
+      refresh_token: ''
     };
   }
 
   componentDidMount() {
     this.getAuthUrl();
-    this.getAuthState();
   }
 
   getAuthUrl() {
-    fetch('/api/v1/spotify/auth')
-      .then(data => data.json())
-      .then(data => this.setState({ auth_url: data.authUrl }));
-  }
-
-  getAuthState() {
-    fetch('/api/v1/spotify/auth/state').then(data =>
-      this.setState({ auth_state: data.status })
+    const client_id = process.env.CLIENT_ID;
+    const base_url =
+      process.env.NODE_ENV !== 'production'
+        ? process.env.BASE_URL_DEV
+        : process.env.BASE_URL_PROD;
+    const encoded_url = encodeURIComponent(
+      `${base_url}/${process.env.CALLBACK}`
     );
+    const callback = process.env.CALLBACK;
+    const scope =
+      'user-read-private user-read-email playlist-modify-public playlist-modify-private';
+    const state = cryptoRandomString({ length: 10, type: 'base64' });
+    this.setState({
+      auth_url: `https://accounts.spotify.com/authorize/?client_id=${client_id}&response_type=token&redirect_uri=${encoded_url}&scope=${encodeURIComponent(
+        scope
+      )}&state=${state}`
+    });
   }
 
   renderLogin() {
-    const { auth_url, auth_state } = this.state;
-    if (auth_state == 200) {
+    const { auth_url, access_token, refresh_token } = this.state;
+    console.log(auth_url);
+    if (access_token && refresh_token) {
       return (
-        <div className="h-100 d-flex flex-column justify-content-center">
-          <div className="row justify-content-center">
-            <div className="jumbotron">
-              <h1 className="display-4">You're logged in!</h1>
-            </div>
-          </div>
-          <div className="row justify-content-center">
-            <a className="btn btn-outline-primary" href="/playlist">
-              Click here to see your playlists!
-            </a>
-          </div>
-        </div>
+        <Jumbotron
+          url="/playlist"
+          buttonText="Click here to see your playlists!"
+          headerText="You're logged in!"
+        />
       );
     } else {
       return (
-        <div className="h-100 d-flex flex-column justify-content-center">
-          <div className="row justify-content-center">
-            <div className="jumbotron">
-              <h1 className="display-4">Need new song recommendations?</h1>
-            </div>
-          </div>
-          <div className="row justify-content-center">
-            <Link href={auth_url}>
-              <a className="btn btn-outline-primary">Click here!</a>
-            </Link>
-          </div>
-        </div>
+        <Jumbotron
+          url={auth_url}
+          buttonText="Click here!"
+          headerText="Need new song recommendations?"
+        />
       );
     }
   }

@@ -11,13 +11,6 @@ const mongoose = require('mongoose');
 const helmet = require('helmet');
 require('dotenv').config();
 
-const scopes = [
-  'user-read-private',
-  'user-read-email',
-  'playlist-modify-public',
-  'playlist-modify-private'
-];
-
 const state = cryptoRandomString({ length: 10, type: 'base64' });
 const session_secret = cryptoRandomString({ length: 10, type: 'base64' });
 const client_id = process.env.CLIENT_ID;
@@ -72,15 +65,6 @@ server
     app.get('/api/v1/spotify/auth', (req, res) => {
       authUrl = spotifyApi.createAuthorizeURL(scopes, state);
       res.send({ authUrl });
-    });
-
-    app.get('/callback', async (req, res) => {
-      const { code } = req.query;
-      const data = await spotifyApi.authorizationCodeGrant(code);
-      const { access_token, refresh_token } = data.body;
-      spotifyApi.setAccessToken(access_token);
-      spotifyApi.setRefreshToken(refresh_token);
-      res.redirect(base_url);
     });
 
     app.get('/api/v1/spotify/auth/state', async (req, res) => {
