@@ -1,0 +1,13 @@
+{
+  "build": {
+    "env": {
+      "CLIENT_ID": "@client-id",
+      "CLIENT_ID_SECRET": "@client-id-secret",
+      "BASE_URL_DEV": "@base-url-dev",
+      "BASE_URL_PROD": "@base-url-prod",
+      "MONGO_ATLAS_ID": "@mongo-atlas-id",
+      "MONGO_ATLAS_PW": "@mongo-atlas-pw",
+      "CALLBACK": "@callback"
+    }
+  }
+}

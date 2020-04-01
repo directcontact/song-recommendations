@@ -7,6 +7,8 @@ const cryptoRandomString = require('crypto-random-string');
 const session = require('express-session');
 const next = require('next');
 const recommendAlgorithm = require('./util/recommendAlgorithm');
+const mongoose = require('mongoose');
+const helmet = require('helmet');
 require('dotenv').config();
 
 const scopes = [
@@ -36,6 +38,10 @@ const handle = server.getRequestHandler();
 server
   .prepare()
   .then(() => {
+    //    mongoose.connect(
+    //      `mongodb+srv://${process.env.MONGO_ATLAS_ID}:${process.env.MONGO_ATLAS_PW}@song-recommendations-rfw0m.mongodb.net/test?retryWrites=true&w=majority`
+    //    );
+
     const app = express();
 
     const refreshToken = async () => {
@@ -47,6 +53,7 @@ server
     };
 
     app
+      .use(helmet())
       .use(cors())
       .use(bodyParser.json())
       .use(cookieParser())

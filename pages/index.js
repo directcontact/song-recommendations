@@ -1,5 +1,7 @@
 import React from 'react';
 import Layout from '../components/Layout';
+import fetch from 'isomorphic-unfetch';
+import Link from 'next/link';
 
 export default class IndexPage extends React.Component {
   constructor() {
@@ -53,9 +55,9 @@ export default class IndexPage extends React.Component {
             </div>
           </div>
           <div className="row justify-content-center">
-            <a className="btn btn-outline-primary" href={auth_url}>
-              Click here!
-            </a>
+            <Link href={auth_url}>
+              <a className="btn btn-outline-primary">Click here!</a>
+            </Link>
           </div>
         </div>
       );
