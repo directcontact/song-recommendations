@@ -1,12 +1,15 @@
 import React from 'react';
 import Layout from '../components/Layout';
+import Jumbotron from '../components/Jumbotron';
+import fetch from 'isomorphic-unfetch';
+import Link from 'next/link';
 
 export default class IndexPage extends React.Component {
   constructor() {
     super();
     this.state = {
-      auth_url: null,
-      auth_state: null
+      auth_url: '',
+      auth_state: ''
     };
   }
 
@@ -22,42 +25,30 @@ export default class IndexPage extends React.Component {
   }
 
   getAuthState() {
-    fetch('/api/v1/spotify/auth/state').then(data =>
-      this.setState({ auth_state: data.status })
-    );
+    fetch('/api/v1/spotify/auth/state')
+      .then(data => data.json())
+      .then(data => this.setState({ auth_state: data.access_token }));
   }
 
   renderLogin() {
     const { auth_url, auth_state } = this.state;
-    if (auth_state == 200) {
+    if (auth_state) {
       return (
-        <div className="h-100 d-flex flex-column justify-content-center">
-          <div className="row justify-content-center">
-            <div className="jumbotron">
-              <h1 className="display-4">You're logged in!</h1>
-            </div>
-          </div>
-          <div className="row justify-content-center">
-            <a className="btn btn-outline-primary" href="/playlist">
+        <Jumbotron headerText="You're logged in!">
+          <Link href="/playlist">
+            <a className="btn btn-outline-primary" href={auth_url}>
               Click here to see your playlists!
             </a>
-          </div>
-        </div>
+          </Link>
+        </Jumbotron>
       );
     } else {
       return (
-        <div className="h-100 d-flex flex-column justify-content-center">
-          <div className="row justify-content-center">
-            <div className="jumbotron">
-              <h1 className="display-4">Need new song recommendations?</h1>
-            </div>
-          </div>
-          <div className="row justify-content-center">
-            <a className="btn btn-outline-primary" href={auth_url}>
-              Click here!
-            </a>
-          </div>
-        </div>
+        <Jumbotron headerText="Need new song recommendations?">
+          <a className="btn btn-outline-primary" href={auth_url}>
+            Click here to login!
+          </a>
+        </Jumbotron>
       );
     }
   }

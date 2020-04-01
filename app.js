@@ -84,8 +84,8 @@ server
     });
 
     app.get('/api/v1/spotify/auth/state', async (req, res) => {
-      const data = await spotifyApi.getUser();
-      res.sendStatus(data.statusCode);
+      const access_token = spotifyApi.getAccessToken();
+      res.send({ access_token });
     });
 
     app.get('/api/v1/spotify/playlists', async (req, res) => {

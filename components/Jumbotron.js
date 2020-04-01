@@ -10,11 +10,7 @@ const Jumbotron = props => {
           <h1 className="display-4">{props.headerText}</h1>
         </div>
       </div>
-      <div className="row justify-content-center">
-        <a className="btn btn-outline-primary" href={props.url}>
-          {props.buttonText}
-        </a>
-      </div>
+      <div className="row justify-content-center">{props.children}</div>
     </div>
   );
 };
