@@ -38,9 +38,9 @@ const handle = server.getRequestHandler();
 server
   .prepare()
   .then(() => {
-    //    mongoose.connect(
-    //      `mongodb+srv://${process.env.MONGO_ATLAS_ID}:${process.env.MONGO_ATLAS_PW}@song-recommendations-rfw0m.mongodb.net/test?retryWrites=true&w=majority`
-    //    );
+    mongoose.connect(
+      `mongodb+srv://${process.env.MONGO_ATLAS_ID}:${process.env.MONGO_ATLAS_PW}@song-recommendations-rfw0m.mongodb.net/test?retryWrites=true&w=majority`
+    );
 
     const app = express();
 
@@ -95,9 +95,7 @@ server
         data = await spotifyApi.getUserPlaylists();
       }
 
-      data.statusCode === 200
-        ? res.send(data.body).sendStatus(data.statusCode)
-        : res.sendStatus(401);
+      data.statusCode === 200 ? res.send(data.body) : res.sendStatus(401);
     });
 
     app.get('/api/v1/spotify/playlists/:playlistId', async (req, res) => {
