@@ -35,5 +35,8 @@ body {
 .u-margin-top-huge {
   margin-top: 10rem !important; }
 
-.masthead {
-  height: 50vh; }
+.spotify {
+  height: 100vh; }
+  .spotify--content {
+    display: flex;
+    justify-content: center; }
