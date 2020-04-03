@@ -1,5 +1,7 @@
 import React from 'react';
 import Layout from '../components/Layout';
+import Card from '../components/Card';
+import Jumbotron from '../components/Jumbotron';
 import { chunk } from 'lodash';
 import Router from 'next/router';
 
@@ -33,6 +35,7 @@ export default class Playlist extends React.Component {
 
   renderPlaylists() {
     const { playlists } = this.state;
+    console.log(playlists);
     const sections = chunk(playlists, 3);
     return (
       <div>
@@ -40,17 +43,15 @@ export default class Playlist extends React.Component {
           <div className="row mb-3 mt-3" key={idx}>
             {divs.map((playlist, idx) => (
               <div className="col-md-4 text-center" key={idx}>
-                <div className="card-group">
-                  <div className="card">
-                    <a
-                      href={'/api/v1/spotify/playlists/' + playlist.id}
-                      className="list-group-item list-group-item-action"
-                      key={idx}
-                    >
-                      <h6>{playlist.name}</h6>
-                    </a>
-                  </div>
-                </div>
+                <Card>
+                  <a
+                    href={'/api/v1/spotify/playlists/' + playlist.id}
+                    className="list-group-item list-group-item-action"
+                    key={idx}
+                  >
+                    <h6>{playlist.name}</h6>
+                  </a>
+                </Card>
               </div>
             ))}
           </div>
@@ -62,14 +63,8 @@ export default class Playlist extends React.Component {
   render() {
     return (
       <Layout>
-        <div className="h-100 d-flex flex-column justify-content-center">
-          <div className="row justify-content-center">
-            <div className="jumbotron">
-              <h1 className="display-4 text-center">
-                Below should be your playlists!
-              </h1>
-            </div>
-          </div>
+        <Jumbotron headerText="Below should be your playlists!" />
+        <div className="row justify-content-center">
           {this.renderPlaylists()}
         </div>
       </Layout>

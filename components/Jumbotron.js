@@ -1,6 +1,4 @@
 import React from 'react';
-import Link from 'next/link';
-import { loadGetInitialProps } from 'next/dist/next-server/lib/utils';
 
 const Jumbotron = props => {
   return (
