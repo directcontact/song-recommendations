@@ -15,6 +15,7 @@ export default class IndexPage extends React.Component {
 
   componentDidMount() {
     this.getAuthUrl();
+    this.getAuthState();
   }
 
   getAuthUrl() {
