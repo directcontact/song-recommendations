@@ -1,18 +1,15 @@
 import React from 'react';
 import Layout from '../components/Layout';
+import Jumbotron from '../components/Jumbotron';
 import fetch from 'isomorphic-unfetch';
 import Link from 'next/link';
-import Jumbotron from '../components/Jumbotron';
-import Router from 'next/router';
-import cryptoRandomString from 'crypto-random-string';
 
 export default class IndexPage extends React.Component {
   constructor() {
     super();
     this.state = {
-      auth_url: null,
-      access_token: '',
-      refresh_token: ''
+      auth_url: '',
+      auth_state: '',
     };
   }
 
@@ -21,43 +18,36 @@ export default class IndexPage extends React.Component {
   }
 
   getAuthUrl() {
-    const client_id = process.env.CLIENT_ID;
-    const base_url =
-      process.env.NODE_ENV !== 'production'
-        ? process.env.BASE_URL_DEV
-        : process.env.BASE_URL_PROD;
-    const encoded_url = encodeURIComponent(
-      `${base_url}/${process.env.CALLBACK}`
-    );
-    const callback = process.env.CALLBACK;
-    const scope =
-      'user-read-private user-read-email playlist-modify-public playlist-modify-private';
-    const state = cryptoRandomString({ length: 10, type: 'base64' });
-    this.setState({
-      auth_url: `https://accounts.spotify.com/authorize/?client_id=${client_id}&response_type=token&redirect_uri=${encoded_url}&scope=${encodeURIComponent(
-        scope
-      )}&state=${state}`
-    });
+    fetch('/api/v1/spotify/auth')
+      .then((data) => data.json())
+      .then((data) => this.setState({ auth_url: data.authUrl }));
+  }
+
+  getAuthState() {
+    fetch('/api/v1/spotify/auth/state')
+      .then((data) => data.json())
+      .then((data) => this.setState({ auth_state: data.state }));
   }
 
   renderLogin() {
-    const { auth_url, access_token, refresh_token } = this.state;
-    console.log(auth_url);
-    if (access_token && refresh_token) {
+    const { auth_url, auth_state } = this.state;
+    if (auth_state) {
       return (
-        <Jumbotron
-          url="/playlist"
-          buttonText="Click here to see your playlists!"
-          headerText="You're logged in!"
-        />
+        <Jumbotron headerText="You're logged in!">
+          <Link href="/playlist">
+            <a className="btn btn-outline-primary" href={auth_url}>
+              Click here to see your playlists!
+            </a>
+          </Link>
+        </Jumbotron>
       );
     } else {
       return (
-        <Jumbotron
-          url={auth_url}
-          buttonText="Click here!"
-          headerText="Need new song recommendations?"
-        />
+        <Jumbotron headerText="Need new song recommendations?">
+          <a className="btn btn-outline-primary" href={auth_url}>
+            Click here to login!
+          </a>
+        </Jumbotron>
       );
     }
   }
