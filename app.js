@@ -7,13 +7,15 @@ const cryptoRandomString = require('crypto-random-string');
 const session = require('express-session');
 const next = require('next');
 const recommendAlgorithm = require('./util/recommendAlgorithm');
+const mongoose = require('mongoose');
+const helmet = require('helmet');
 require('dotenv').config();
 
 const scopes = [
   'user-read-private',
   'user-read-email',
   'playlist-modify-public',
-  'playlist-modify-private'
+  'playlist-modify-private',
 ];
 
 const state = cryptoRandomString({ length: 10, type: 'base64' });
@@ -27,7 +29,7 @@ const callback = process.env.CALLBACK;
 const spotifyApi = new SpotifyWebApi({
   clientId: client_id,
   clientSecret: client_secret_id,
-  redirectUri: `${base_url}/${callback}`
+  redirectUri: `${base_url}/${callback}`,
 });
 const dev = env !== 'production';
 const server = next({ dev });
@@ -36,17 +38,30 @@ const handle = server.getRequestHandler();
 server
   .prepare()
   .then(() => {
+    mongoose.connect(
+      `mongodb+srv://${process.env.MONGO_ATLAS_ID}:${process.env.MONGO_ATLAS_PW}@song-recommendations-rfw0m.mongodb.net/test?retryWrites=true&w=majority`
+    );
+
     const app = express();
 
-    const refreshToken = async () => {
-      const data = await spotifyApi.refreshAccessToken();
+    const InstantiateSpotifyApi = (req) => {
+      const spotifyApiInstance = new SpotifyWebApi();
+      spotifyApiInstance.setAccessToken(req.session.access_token);
+      spotifyApiInstance.setRefreshToken(req.session.refresh_token);
+      return spotifyApiInstance;
+    };
+
+    const refreshToken = async (req) => {
+      const spotifyApiInstance = InstantiateSpotifyApi(req);
+      const data = await spotifyApiInstance.refreshAccessToken();
       const response = data.statusCode;
-      const { refresh_token } = data.body;
-      spotifyApi.setRefreshToken(refresh_token);
+      const { access_token } = data.body;
+      req.session.access_token = access_token;
       return response;
     };
 
     app
+      .use(helmet())
       .use(cors())
       .use(bodyParser.json())
       .use(cookieParser())
@@ -71,36 +86,36 @@ server
       const { code } = req.query;
       const data = await spotifyApi.authorizationCodeGrant(code);
       const { access_token, refresh_token } = data.body;
-      spotifyApi.setAccessToken(access_token);
-      spotifyApi.setRefreshToken(refresh_token);
+      req.session.access_token = access_token;
+      req.session.refresh_token = refresh_token;
       res.redirect(base_url);
     });
 
     app.get('/api/v1/spotify/auth/state', async (req, res) => {
-      const data = await spotifyApi.getUser();
-      res.sendStatus(data.statusCode);
+      const state = req.session.access_token;
+      res.send({ state });
     });
 
     app.get('/api/v1/spotify/playlists', async (req, res) => {
-      const data = await spotifyApi.getUserPlaylists();
+      const spotifyApiInstance = InstantiateSpotifyApi(req);
+      const data = await spotifyApiInstance.getUserPlaylists();
       if (data.statusCode === 401) {
         await refreshToken();
-        data = await spotifyApi.getUserPlaylists();
+        data = await spotifyApiInstance.getUserPlaylists();
       }
 
-      data.statusCode === 200
-        ? res.send(data.body).sendStatus(data.statusCode)
-        : res.sendStatus(401);
+      data.statusCode === 200 ? res.send(data.body) : res.sendStatus(401);
     });
 
     app.get('/api/v1/spotify/playlists/:playlistId', async (req, res) => {
+      const spotifyApiInstance = InstantiateSpotifyApi(req);
       const id = req.params.playlistId;
-      const data = await spotifyApi.getPlaylistTracks(id);
+      const data = await spotifyApiInstance.getPlaylistTracks(id);
       if (data.statusCode === 401) {
         await refreshToken();
-        data = await spotifyApi.getPlaylistTracks(id);
+        data = await spotifyApiInstance.getPlaylistTracks(id);
       }
-      const tracks = data.body.items.map(item => item.track);
+      const tracks = data.body.items.map((item) => item.track);
       req.session.tracks = tracks;
       data.statusCode === 200
         ? res.redirect('/recommendation')
@@ -108,24 +123,24 @@ server
     });
 
     app.get('/api/v1/spotify/recommend', async (req, res) => {
+      const spotifyApiInstance = InstantiateSpotifyApi(req);
       const tracks = req.session.tracks;
 
       if (tracks === undefined) {
         return res.sendStatus(401);
       }
 
-      const ids = tracks.map(track => track.id);
-      const features = await spotifyApi.getAudioFeaturesForTracks(ids);
-
+      const ids = tracks.map((track) => track.id);
+      const features = await spotifyApiInstance.getAudioFeaturesForTracks(ids);
       if (features.statusCode === 401) {
         await refreshToken();
-        features = await spotifyApi.getAudioFeaturesForTracks(ids);
+        features = await spotifyApiInstance.getAudioFeaturesForTracks(ids);
       }
       const recommendation = recommendAlgorithm(
         features.body.audio_features,
         ids
       );
-      const songs = await spotifyApi.getRecommendations({
+      const songs = await spotifyApiInstance.getRecommendations({
         seed_tracks: recommendation.seed_tracks,
         target_danceability: recommendation.danceability,
         target_energy: recommendation.energy,
@@ -136,8 +151,9 @@ server
         target_instrumentalness: recommendation.instrumentalness,
         target_liveness: recommendation.liveness,
         target_valence: recommendation.valence,
-        target_popularity: recommendation.popularity
+        target_popularity: recommendation.popularity,
       });
+
       res.send(songs);
     });
 
@@ -149,7 +165,7 @@ server
       console.log(`Listening on port ${process.env.PORT || 3000}!`);
     });
   })
-  .catch(err => {
+  .catch((err) => {
     console.error(err.stack);
     process.exit(1);
   });
