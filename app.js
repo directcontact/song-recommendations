@@ -15,7 +15,7 @@ const scopes = [
   'user-read-private',
   'user-read-email',
   'playlist-modify-public',
-  'playlist-modify-private'
+  'playlist-modify-private',
 ];
 
 const state = cryptoRandomString({ length: 10, type: 'base64' });
@@ -29,7 +29,7 @@ const callback = process.env.CALLBACK;
 const spotifyApi = new SpotifyWebApi({
   clientId: client_id,
   clientSecret: client_secret_id,
-  redirectUri: `${base_url}/${callback}`
+  redirectUri: `${base_url}/${callback}`,
 });
 const dev = env !== 'production';
 const server = next({ dev });
@@ -80,12 +80,13 @@ server
       const { access_token, refresh_token } = data.body;
       spotifyApi.setAccessToken(access_token);
       spotifyApi.setRefreshToken(refresh_token);
+      req.session.access_token = access_token;
       res.redirect(base_url);
     });
 
     app.get('/api/v1/spotify/auth/state', async (req, res) => {
-      const access_token = spotifyApi.getAccessToken();
-      res.send({ access_token });
+      const state = req.session.access_token;
+      res.send({ state });
     });
 
     app.get('/api/v1/spotify/playlists', async (req, res) => {
@@ -105,7 +106,7 @@ server
         await refreshToken();
         data = await spotifyApi.getPlaylistTracks(id);
       }
-      const tracks = data.body.items.map(item => item.track);
+      const tracks = data.body.items.map((item) => item.track);
       req.session.tracks = tracks;
       data.statusCode === 200
         ? res.redirect('/recommendation')
@@ -119,7 +120,7 @@ server
         return res.sendStatus(401);
       }
 
-      const ids = tracks.map(track => track.id);
+      const ids = tracks.map((track) => track.id);
       const features = await spotifyApi.getAudioFeaturesForTracks(ids);
 
       if (features.statusCode === 401) {
@@ -141,7 +142,7 @@ server
         target_instrumentalness: recommendation.instrumentalness,
         target_liveness: recommendation.liveness,
         target_valence: recommendation.valence,
-        target_popularity: recommendation.popularity
+        target_popularity: recommendation.popularity,
       });
       res.send(songs);
     });
@@ -154,7 +155,7 @@ server
       console.log(`Listening on port ${process.env.PORT || 3000}!`);
     });
   })
-  .catch(err => {
+  .catch((err) => {
     console.error(err.stack);
     process.exit(1);
   });

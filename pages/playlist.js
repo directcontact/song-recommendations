@@ -9,7 +9,7 @@ export default class Playlist extends React.Component {
   constructor() {
     super();
     this.state = {
-      playlists: []
+      playlists: [],
     };
   }
 
@@ -19,23 +19,22 @@ export default class Playlist extends React.Component {
 
   getPlaylists() {
     fetch('/api/v1/spotify/playlists')
-      .then(data => {
+      .then((data) => {
         if (data.status === 401) {
           Router.push('/');
         }
         return data.json();
       })
-      .then(data =>
+      .then((data) =>
         this.setState({
-          playlists: data.items
+          playlists: data.items,
         })
       )
-      .catch(err => console.log(err.stack));
+      .catch((err) => console.log(err.stack));
   }
 
   renderPlaylists() {
     const { playlists } = this.state;
-    console.log(playlists);
     const sections = chunk(playlists, 3);
     return (
       <div>

@@ -9,7 +9,7 @@ export default class IndexPage extends React.Component {
     super();
     this.state = {
       auth_url: '',
-      auth_state: ''
+      auth_state: '',
     };
   }
 
@@ -20,14 +20,14 @@ export default class IndexPage extends React.Component {
 
   getAuthUrl() {
     fetch('/api/v1/spotify/auth')
-      .then(data => data.json())
-      .then(data => this.setState({ auth_url: data.authUrl }));
+      .then((data) => data.json())
+      .then((data) => this.setState({ auth_url: data.authUrl }));
   }
 
   getAuthState() {
     fetch('/api/v1/spotify/auth/state')
-      .then(data => data.json())
-      .then(data => this.setState({ auth_state: data.access_token }));
+      .then((data) => data.json())
+      .then((data) => this.setState({ auth_state: data.state }));
   }
 
   renderLogin() {
