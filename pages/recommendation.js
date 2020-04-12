@@ -10,7 +10,7 @@ export default class Recommendation extends React.Component {
   constructor() {
     super();
     this.state = {
-      tracks: []
+      tracks: [],
     };
   }
 
@@ -20,14 +20,15 @@ export default class Recommendation extends React.Component {
 
   getRecommendations() {
     fetch('/api/v1/spotify/recommend')
-      .then(data => {
+      .then((data) => {
         if (data.status === 401) {
           Router.push('/');
         }
+        console.log(data);
         return data.json();
       })
-      .then(data => this.setState({ tracks: data.body.tracks }))
-      .catch(err => console.log(err.stack));
+      .then((data) => this.setState({ tracks: data.body.tracks }))
+      .catch((err) => console.log(err.stack));
   }
 
   renderRecommendations() {
@@ -42,7 +43,7 @@ export default class Recommendation extends React.Component {
                 <Card>
                   <div className="card-body">
                     <h5 className="card-title">
-                      {track.artists.map(artist => artist.name).join(', ')}
+                      {track.artists.map((artist) => artist.name).join(', ')}
                     </h5>
                     <div className="card-text">
                       <a className="list-group-item" key={idx}>

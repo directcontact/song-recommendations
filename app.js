@@ -44,11 +44,19 @@ server
 
     const app = express();
 
-    const refreshToken = async () => {
-      const data = await spotifyApi.refreshAccessToken();
+    const InstantiateSpotifyApi = (req) => {
+      const spotifyApiInstance = new SpotifyWebApi();
+      spotifyApiInstance.setAccessToken(req.session.access_token);
+      spotifyApiInstance.setRefreshToken(req.session.refresh_token);
+      return spotifyApiInstance;
+    };
+
+    const refreshToken = async (req) => {
+      const spotifyApiInstance = InstantiateSpotifyApi(req);
+      const data = await spotifyApiInstance.refreshAccessToken();
       const response = data.statusCode;
-      const { refresh_token } = data.body;
-      spotifyApi.setRefreshToken(refresh_token);
+      const { access_token } = data.body;
+      req.session.access_token = access_token;
       return response;
     };
 
@@ -78,9 +86,8 @@ server
       const { code } = req.query;
       const data = await spotifyApi.authorizationCodeGrant(code);
       const { access_token, refresh_token } = data.body;
-      spotifyApi.setAccessToken(access_token);
-      spotifyApi.setRefreshToken(refresh_token);
       req.session.access_token = access_token;
+      req.session.refresh_token = refresh_token;
       res.redirect(base_url);
     });
 
@@ -90,21 +97,23 @@ server
     });
 
     app.get('/api/v1/spotify/playlists', async (req, res) => {
-      const data = await spotifyApi.getUserPlaylists();
+      const spotifyApiInstance = InstantiateSpotifyApi(req);
+      const data = await spotifyApiInstance.getUserPlaylists();
       if (data.statusCode === 401) {
         await refreshToken();
-        data = await spotifyApi.getUserPlaylists();
+        data = await spotifyApiInstance.getUserPlaylists();
       }
 
       data.statusCode === 200 ? res.send(data.body) : res.sendStatus(401);
     });
 
     app.get('/api/v1/spotify/playlists/:playlistId', async (req, res) => {
+      const spotifyApiInstance = InstantiateSpotifyApi(req);
       const id = req.params.playlistId;
-      const data = await spotifyApi.getPlaylistTracks(id);
+      const data = await spotifyApiInstance.getPlaylistTracks(id);
       if (data.statusCode === 401) {
         await refreshToken();
-        data = await spotifyApi.getPlaylistTracks(id);
+        data = await spotifyApiInstance.getPlaylistTracks(id);
       }
       const tracks = data.body.items.map((item) => item.track);
       req.session.tracks = tracks;
@@ -114,6 +123,7 @@ server
     });
 
     app.get('/api/v1/spotify/recommend', async (req, res) => {
+      const spotifyApiInstance = InstantiateSpotifyApi(req);
       const tracks = req.session.tracks;
 
       if (tracks === undefined) {
@@ -121,17 +131,16 @@ server
       }
 
       const ids = tracks.map((track) => track.id);
-      const features = await spotifyApi.getAudioFeaturesForTracks(ids);
-
+      const features = await spotifyApiInstance.getAudioFeaturesForTracks(ids);
       if (features.statusCode === 401) {
         await refreshToken();
-        features = await spotifyApi.getAudioFeaturesForTracks(ids);
+        features = await spotifyApiInstance.getAudioFeaturesForTracks(ids);
       }
       const recommendation = recommendAlgorithm(
         features.body.audio_features,
         ids
       );
-      const songs = await spotifyApi.getRecommendations({
+      const songs = await spotifyApiInstance.getRecommendations({
         seed_tracks: recommendation.seed_tracks,
         target_danceability: recommendation.danceability,
         target_energy: recommendation.energy,
@@ -144,6 +153,7 @@ server
         target_valence: recommendation.valence,
         target_popularity: recommendation.popularity,
       });
+
       res.send(songs);
     });
 

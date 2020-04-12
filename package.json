@@ -38,7 +38,6 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-spotify-player": "^1.0.4",
-    "spotify-web-api-js": "^1.2.0",
     "spotify-web-api-node": "^4.0.0"
   }
 }
