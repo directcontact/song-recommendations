@@ -2,10 +2,6 @@
 
 > Next.js + Bootstrap 4 and Node.js + Express + Spotify Web API wrapper
 
-## Demo
-
-https://song-recommendations.herokuapp.com
-
 ## Build Scripts
 
 ```
