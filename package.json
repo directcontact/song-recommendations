@@ -39,6 +39,7 @@
     "react-dom": "^16.14.0",
     "react-spotify-player": "^1.0.4",
     "serialize-javascript": "^4.0.0",
-    "spotify-web-api-node": "^4.0.0"
+    "spotify-web-api-node": "^4.0.0",
+    "object-path": "0.11.5"
   }
 }
