@@ -30,7 +30,7 @@
     "express-session": "^1.17.1",
     "helmet": "^3.23.3",
     "isomorphic-unfetch": "^3.1.0",
-    "lodash": "^4.17.20",
+    "lodash": "^4.17.21",
     "mongoose": "^5.10.11",
     "next": "^9.5.5",
     "node-sass": "^4.14.1",
