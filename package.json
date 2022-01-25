@@ -1,45 +1,25 @@
 {
-  "name": "song-recommendations",
-  "version": "1.0.0",
-  "description": "A Web app built on Spotify API for requesting new songs based on existing playlist",
-  "main": "app.js",
+  "private": true,
   "scripts": {
-    "dev": "npm run build && pm2 start app.js",
-    "compile:sass": "node-sass static/sass/main.scss static/styles.css",
-    "build": "npm run compile:sass && next build",
-    "start": "pm2-runtime start ecosystem.config.js --env production"
+    "dev": "next",
+    "build": "next build",
+    "start": "next start"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/kimjeff49/song-recommendations.git"
-  },
-  "author": "Jeff Kim",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/kimjeff49/song-recommendations/issues"
-  },
-  "homepage": "https://github.com/kimjeff49/song-recommendations#readme",
   "dependencies": {
-    "@types/react-transition-group": "^4.4.0",
-    "body-parser": "^1.19.0",
-    "cookie-parser": "^1.4.5",
-    "cors": "^2.8.5",
-    "crypto-random-string": "^3.3.0",
-    "dotenv": "^8.2.0",
-    "express": "^4.17.1",
-    "express-session": "^1.17.1",
-    "helmet": "^3.23.3",
-    "isomorphic-unfetch": "^3.1.0",
-    "lodash": "^4.17.20",
-    "mongoose": "^5.10.11",
-    "next": "^9.5.5",
-    "node-sass": "^4.14.1",
-    "pm2": "^4.5.0",
-    "react": "^16.14.0",
-    "react-dom": "^16.14.0",
-    "react-spotify-player": "^1.0.4",
-    "serialize-javascript": "^4.0.0",
-    "spotify-web-api-node": "^4.0.0",
-    "object-path": "0.11.5"
+    "@chakra-ui/icons": "^1.0.5",
+    "@chakra-ui/react": "^1.4.2",
+    "@chakra-ui/theme-tools": "1.1.2",
+    "@emotion/react": "11.1.5",
+    "@emotion/styled": "11.1.5",
+    "framer-motion": "^4.0.3",
+    "next": "latest",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  },
+  "devDependencies": {
+    "@types/node": "^14.6.0",
+    "@types/react": "^17.0.3",
+    "@types/react-dom": "^17.0.3",
+    "typescript": "4.3.2"
   }
 }
