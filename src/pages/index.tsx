@@ -1,6 +1,4 @@
-<<<<<<< HEAD
 import { Flex, Text, Heading } from "@chakra-ui/react";
-import Image from "next/image";
 
 const Index = () => (
   <Flex
@@ -51,13 +49,6 @@ const Index = () => (
         Login
       </Heading>
     </Flex>
-=======
-import { Text, List, ListIcon, ListItem, Flex } from '@chakra-ui/react';
-
-const Index = () => (
-  <Flex>
-    <Text>hello</Text>
->>>>>>> 249582ef5a13b044e56f660c443709db1332e122
   </Flex>
 );
 
