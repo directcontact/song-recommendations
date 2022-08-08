@@ -4,9 +4,10 @@ const Index = () => (
   <Flex
     alignItems="center"
     justifyContent="center"
-    h="1080px"
-    w="1920px"
+    h="100vh"
+    w="100vw"
     position="relative"
+    overflow="hidden"
   >
     <Flex
       h="full"
@@ -15,7 +16,14 @@ const Index = () => (
       justifyContent="center"
       position="absolute"
     >
-      <video autoPlay muted loop style={{ height: "1080px", width: "1920px" }}>
+      <video
+        autoPlay
+        muted
+        loop
+        style={{
+          objectFit: "fill",
+        }}
+      >
         <source src="/images/bg.mp4" />
       </video>
     </Flex>
@@ -34,7 +42,9 @@ const Index = () => (
     ></Flex>
 
     <Flex position="absolute" left="70px" top={200}>
-      <Heading color="white">/spotify-recommendations</Heading>
+      <Heading fontSize="3xl" color="white">
+        /spotify-recommendations
+      </Heading>
     </Flex>
 
     <Flex
