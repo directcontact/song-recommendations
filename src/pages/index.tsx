@@ -1,6 +1,17 @@
 import { Flex, Heading, Input, VStack, Button } from "@chakra-ui/react";
+import querystring from "querystring";
 
 const Index = () => {
+  const authURL =
+    "https://accounts.spotify.com/authorize?" +
+    querystring.stringify({
+      response_type: "code",
+      client_id: process.env.SPOTIFY_CLIENT_ID,
+      scope: scope,
+      redirect_uri: redirect_uri,
+      state: state,
+    });
+
   return (
     <Flex
       alignItems="center"
